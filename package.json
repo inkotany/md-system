@@ -1,0 +1,17 @@
+{
+  "name": "md-system-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.19.2",
+    "joi": "^17.12.2",
+    "mongoose": "^8.2.4"
+  }
+}
