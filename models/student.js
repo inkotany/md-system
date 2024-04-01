@@ -4,7 +4,8 @@ const joi = require('joi');
 const studentSchema = new mongoose.Schema({
     names: {
         type: String,
-        required: true
+        required: true,
+        trim: true
     },
     gender: {
         type: String,
