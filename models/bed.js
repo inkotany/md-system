@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const joi = require('joi');
+const Joi = require('joi');
 
 const bedSchema = new mongoose.Schema({
     bID: {
@@ -19,7 +19,11 @@ const bedSchema = new mongoose.Schema({
 const Bed = mongoose.model('Bed', bedSchema);
 
 function validateBed(bed) {
-    return true;
+    let schema = Joi.object({
+        bID: Joi.string().required(),
+        type: Joi.number().required()
+    });
+    return schema.validate(bed);
 }
 
 module.exports = { Bed, validateBed };

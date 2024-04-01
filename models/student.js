@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const joi = require('joi');
+const Joi = require('joi');
 
 const studentSchema = new mongoose.Schema({
     names: {
@@ -31,7 +31,12 @@ const studentSchema = new mongoose.Schema({
 const Student = mongoose.model('Student', studentSchema);
 
 function validateStudent(student) {
-    return true;
+    let schema = Joi.object({
+        names: Joi.string().required().min(3),
+        gender: Joi.string().required().max(1).min(1),
+        classRoom: Joi.required()
+    });
+    return schema.validate(student);
 }
 
 module.exports = { Student, validateStudent };

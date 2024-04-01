@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const joi = require('joi');
+const Joi = require('joi');
 
 const bookSchema = new mongoose.Schema({
     title: {
@@ -37,7 +37,13 @@ const bookSchema = new mongoose.Schema({
 const Book = mongoose.model('Book', bookSchema);
 
 function validateBook(book) {
-    return true;
+    let schema = Joi.object({
+        title: Joi.string().required().min(3),
+        code: Joi.string().required(),
+        author: Joi.string().required().min(3),
+        publisher: Joi.string().required().min(3),
+    });
+    return schema.validate(book);
 }
 
 module.exports = { Book, validateBook };

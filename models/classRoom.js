@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const joi = require('joi');
+const Joi = require('joi');
 
 const classRoomSchema = new mongoose.Schema({
     class: {
@@ -11,7 +11,10 @@ const classRoomSchema = new mongoose.Schema({
 const ClassRoom = mongoose.model('ClassRoom', classRoomSchema);
 
 function validateClassRoom(classRoom) {
-    return true;
+    let schema = Joi.object({
+        class: Joi.string().required(),
+    });
+    return schema.validate(classRoom);
 }
 
 module.exports = { ClassRoom, validateClassRoom };

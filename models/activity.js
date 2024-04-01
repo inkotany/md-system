@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const joi = require('joi');
+const Joi = require('joi');
 
 const activitySchema = new mongoose.Schema({
     aID: {
@@ -23,7 +23,11 @@ const activitySchema = new mongoose.Schema({
 const Activity = mongoose.model('Activity', activitySchema);
 
 function validateActivity(activity) {
-    return true;
+    let schema = Joi.object({
+        activity: Joi.string().required(),
+        doneOn: Joi.required()
+    });
+    return schema.validate(activity);
 }
 
 module.exports = {  Activity , validateActivity };

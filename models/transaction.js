@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const joi = require('joi');
+const Joi = require('joi');
 
 const transactionSchema = new mongoose.Schema({
     tID: {
@@ -26,8 +26,13 @@ const transactionSchema = new mongoose.Schema({
 
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
-function validateTransaction(book) {
-    return true;
+function validateTransaction(transaction) {
+    let schema = Joi.object({
+        activity: Joi.required(),
+        doneOn: Joi.required(),
+        agent: Joi.required()
+    });
+    return schema.validate(transaction);
 }
 
 module.exports = { Transaction , validateTransaction };
