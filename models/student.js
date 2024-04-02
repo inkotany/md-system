@@ -7,10 +7,19 @@ const studentSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
+    code: {
+        type: String,
+        required: true,
+        unique: true
+    },
     gender: {
         type: String,
         required: true,
         enum: ['M', 'F']
+    },
+    combination: {
+        type: String,
+        required: true
     },
     classRoom: {
         type: String,
@@ -34,7 +43,9 @@ function validateStudent(student) {
     let schema = Joi.object({
         names: Joi.string().required().min(3),
         gender: Joi.string().required().max(1).min(1),
-        classRoom: Joi.required()
+        classRoom: Joi.required(),
+        code: Joi.string().required(),
+        combination: Joi.string().required()
     });
     return schema.validate(student);
 }

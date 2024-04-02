@@ -24,12 +24,16 @@ const bookSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['Available', 'Issued', 'Missing']
+        enum: ['Available', 'Issued', 'Missing'],
+        default: 'Available'
     },
     theme: {
         type: String
     },
     isTorn: {
+        type: Boolean
+    },
+    archived: {
         type: Boolean
     }
 });
@@ -42,8 +46,23 @@ function validateBook(book) {
         code: Joi.string().required(),
         author: Joi.string().required().min(3),
         publisher: Joi.string().required().min(3),
+        theme: Joi.string().min(2).required(),
+        date_aquired: Joi.required()
     });
     return schema.validate(book);
 }
 
-module.exports = { Book, validateBook };
+function validateMany(book) {
+    let schema = Joi.object({
+        title: Joi.string().required().min(3),
+        author: Joi.string().required().min(3),
+        publisher: Joi.string().required().min(3),
+        theme: Joi.string().min(2).required(),
+        date_aquired: Joi.required(),
+        from: Joi.number().required(),
+        to: Joi.number().required(),
+        backCode: Joi.string().required()
+    })
+}
+
+module.exports = { Book, validateBook, validateMany };

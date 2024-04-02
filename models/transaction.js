@@ -21,6 +21,9 @@ const transactionSchema = new mongoose.Schema({
     doneOn: {
         type: Date,
         default: Date.now
+    },
+    archived: {
+        type: Boolean
     }
 });
 

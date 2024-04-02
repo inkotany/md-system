@@ -4,7 +4,8 @@ const Joi = require('joi');
 const themeSchema = new mongoose.Schema({
     theme: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     }
 });
 

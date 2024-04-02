@@ -12,7 +12,7 @@ const activitySchema = new mongoose.Schema({
         required: true
     },
     student: {
-        type: Array
+        
     },
     doneOn: {
         type: Date,
@@ -24,8 +24,7 @@ const Activity = mongoose.model('Activity', activitySchema);
 
 function validateActivity(activity) {
     let schema = Joi.object({
-        activity: Joi.string().required(),
-        doneOn: Joi.required()
+        activity: Joi.string().required()
     });
     return schema.validate(activity);
 }
