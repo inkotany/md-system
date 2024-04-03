@@ -12,10 +12,16 @@ const transactionSchema = new mongoose.Schema({
         required: true
     },
     student: {
-        type: Array
+        names: {type: String, required: true},
+        classRoom: {type: String, required: true},
+        code: {type: String, required: true}
     },
     agent: {
         type: String,
+        required: true
+    },
+    amount: {
+        type: Number,
         required: true
     },
     doneOn: {

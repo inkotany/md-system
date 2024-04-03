@@ -44,7 +44,6 @@ function validateStudent(student) {
         names: Joi.string().required().min(3),
         gender: Joi.string().required().max(1).min(1),
         classRoom: Joi.required(),
-        code: Joi.string().required(),
         combination: Joi.string().required()
     });
     return schema.validate(student);

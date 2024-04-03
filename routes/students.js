@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const express = require('express');
+const { ClassRoom } = require('../models/classRoom');
 const { Student, validateStudent } = require('../models/student');
+const { generateStudentCode } = require('../algo/generateCode');
 
 const router = express.Router();
 
@@ -27,9 +29,12 @@ router.post('/', async (req, res) => {
     const { error } = validateStudent(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
+    let checkClass = await ClassRoom.findOne({class: req.body.classRoom});
+    if (!checkClass) return res.status(404).send(`Class mwanditsemo: ${req.body.classRoom} ntiba muri system, mubanze muyongeremo.`);
+
     let student = new Student({
         names: req.body.names,
-        code: req.body.code,
+        code: generateStudentCode(),
         combination: req.body.combination,
         gender: req.body.gender,
         classRoom: req.body.classRoom
@@ -37,6 +42,27 @@ router.post('/', async (req, res) => {
 
     student = await student.save();
 
+    res.send(student);
+});
+
+router.put('/:code', async (req, res) => {
+    const { error } = validateStudent(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
+
+    let student = await Student.findOneAndUpdate({code: req.params.code}, {
+        names: req.body.names,
+        combination: req.body.combination,
+        gender: req.body.gender,
+        classRoom: req.body.classRoom
+    }, {new: true});
+
+    if (!student) return res.status(404).send(`Umunyeshuri ufite code: ${req.params.code} ntabonetse`);
+    res.send('Update Success!');
+});
+
+router.delete('/:code', async (req, res) => {
+    const student = Student.findOneAndDelete({code: req.params.code});
+    if (!student) return res.status(404).send('Student not found');
     res.send(student);
 });
 
