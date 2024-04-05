@@ -13,6 +13,11 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/number', async (req, res) => {
+    let count = await Book.estimatedDocumentCount();
+    res.json(count);
+});
+
 router.get('/search', async (req, res) => {
     try {
         const book = await Book.findOne({code: req.query.code});
