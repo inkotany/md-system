@@ -13,10 +13,14 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Count all books
 router.get('/number', async (req, res) => {
-    let count = await Book.estimatedDocumentCount();
-    res.json(count);
+    let total = await Book.estimatedDocumentCount();
+    let issued = await Book.countDocuments({status: 'Issued'});
+    let available = await Book.countDocuments({status: 'Available'});
+    res.json({total: total, issued: issued, available: available});
 });
+
 
 router.get('/search', async (req, res) => {
     try {

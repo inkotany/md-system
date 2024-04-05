@@ -11,6 +11,16 @@ router.get('/', async (req, res) => {
     res.send(students);
 });
 
+router.get('/number', async (req, res) => {
+    let total = await Student.estimatedDocumentCount();
+    res.json({total: total});
+});
+
+router.get('/number/:class', async (req, res) => {
+    let count = await Student.countDocuments({classRoom: req.params.class});
+    res.json({count: count});
+});
+
 router.get('/:code', async (req, res) => {
     const student = await Student.findOne({code: req.params.code});
     if (!student) return res.status(404).send('Student not found!');
