@@ -12,7 +12,15 @@ const activitySchema = new mongoose.Schema({
         required: true
     },
     student: {
-        
+        names: {type: String, required: true},
+        classRoom: {type: String, required: true},
+        gender: {type: String, enum: ['F', 'M']},
+        code: {type: String, required: true}
+    },
+    book: {
+        title: {type: String, required: true},
+        code: {type: String, required: true},
+        theme: {type: String, required: true}
     },
     doneOn: {
         type: Date,
@@ -22,11 +30,5 @@ const activitySchema = new mongoose.Schema({
 
 const Activity = mongoose.model('Activity', activitySchema);
 
-function validateActivity(activity) {
-    let schema = Joi.object({
-        activity: Joi.string().required()
-    });
-    return schema.validate(activity);
-}
 
-module.exports = {  Activity , validateActivity };
+module.exports = {  Activity };

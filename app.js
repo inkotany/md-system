@@ -7,6 +7,7 @@ const studentRoute = require('./routes/students');
 const passwords = require('./routes/passwords');
 const bank = require('./routes/kubitsa/bank');
 const dorm = require('./routes/dorm/dorm');
+const library = require('./routes/library/activities');
 
 mongoose.connect('mongodb://localhost/materDei')
   .then(() => console.log('Connected to MongoDB...'))
@@ -22,6 +23,7 @@ app.use('/api/students', studentRoute);
 app.use('/api/passwords', passwords);
 app.use('/api/kubitsa', bank);
 app.use('/api/dorm', dorm);
+app.use('/api/library', library);
 
 
 app.listen(PORT, () => {
