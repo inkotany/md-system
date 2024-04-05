@@ -54,10 +54,10 @@ router.post('/deposit', async (req, res) => {
         agent: 'User'
     });
 
-    // Update student's balance
+    student = await Student.findOneAndUpdate({code: req.body.code}, { $set: {balance: newBalance}});
+    if (!student) return res.send('Igikorwa ntikibashije gukunda!');
 
-    
-
+    res.status(200).send(`${student.names} abikije ${Number(req.body.amount).toLocaleString()} Rwf`);   
 });
 
 module.exports = router;
