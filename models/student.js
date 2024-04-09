@@ -49,4 +49,22 @@ function validateStudent(student) {
     return schema.validate(student);
 }
 
-module.exports = { Student, validateStudent };
+async function generateUniqueStudentCode(index) {
+    let code;
+    let isDuplicate = true;
+
+    while (isDuplicate) {
+        code = generateStudentCode();
+        const existingStudent = await Student.findOne({code: code});
+        isDuplicate = existingStudent;
+    }
+
+    return code;
+}
+
+function generateStudentCode() {
+    const randomIndex = Math.floor(Math.random() * 1000); // Generate a random index
+    return `MD-${randomIndex.toString().padStart(3, '0')}`;
+}
+
+module.exports = { Student, validateStudent, generateStudentCode, generateUniqueStudentCode };
