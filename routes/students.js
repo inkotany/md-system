@@ -1,8 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const { ClassRoom } = require('../models/classRoom');
-const { Student, validateStudent } = require('../models/student');
-const { generateStudentCode } = require('../algo/generateCode');
+const { Student, validateStudent, generateStudentCode, generateUniqueStudentCode } = require('../models/student');
 
 const router = express.Router();
 
@@ -13,26 +12,22 @@ router.get('/', async (req, res) => {
 
 router.get('/number', async (req, res) => {
     let total = await Student.estimatedDocumentCount();
-    res.json({total: total});
+    res.status(200).json({total: total});
 });
 
-router.get('/number/:class', async (req, res) => {
-    let count = await Student.countDocuments({classRoom: req.params.class});
-    res.json({count: count});
-});
 
 router.get('/:code', async (req, res) => {
     const student = await Student.findOne({code: req.params.code});
     if (!student) return res.status(404).send('Student not found!');
 
-    res.send(student);
+    res.status(200).send(student);
 });
 
 router.get('/byClass/:class', async (req, res) => {
     let students = await Student.find({classRoom: req.params.class}).sort('names');
     if (students.length == 0) return res.status(404).send('Nta munyeshuri dufite muri ' + req.params.class);
 
-    res.send(students);
+    res.status(200).send(students);
 })
 
 router.post('/', async (req, res) => {
@@ -42,9 +37,11 @@ router.post('/', async (req, res) => {
     let checkClass = await ClassRoom.findOne({class: req.body.classRoom});
     if (!checkClass) return res.status(404).send(`Class mwanditsemo: ${req.body.classRoom} ntiba muri system, mubanze muyongeremo.`);
 
+    const code = await generateUniqueStudentCode();
+
     let student = new Student({
         names: req.body.names,
-        code: generateStudentCode(),
+        code: code,
         combination: req.body.combination,
         gender: req.body.gender,
         classRoom: req.body.classRoom
@@ -52,7 +49,7 @@ router.post('/', async (req, res) => {
 
     student = await student.save();
 
-    res.send(student);
+    res.status(200).send(student);
 });
 
 router.put('/:code', async (req, res) => {
@@ -67,13 +64,13 @@ router.put('/:code', async (req, res) => {
     }, {new: true});
 
     if (!student) return res.status(404).send(`Umunyeshuri ufite code: ${req.params.code} ntabonetse`);
-    res.send('Update Success!');
+    res.status(200).send('Update Success!');
 });
 
 router.delete('/:code', async (req, res) => {
     const student = Student.findOneAndDelete({code: req.params.code});
     if (!student) return res.status(404).send('Student not found');
-    res.send(student);
+    res.status(200).send(student);
 });
 
 

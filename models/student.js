@@ -49,7 +49,7 @@ function validateStudent(student) {
     return schema.validate(student);
 }
 
-async function generateUniqueStudentCode(index) {
+async function generateUniqueStudentCode() {
     let code;
     let isDuplicate = true;
 
