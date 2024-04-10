@@ -13,7 +13,7 @@ router.get('/number', async (req, res) => {
     let total = await Book.estimatedDocumentCount();
     let issued = await Book.countDocuments({status: 'Issued'});
     let available = await Book.countDocuments({status: 'Available'});
-    res.json({total: total, issued: issued, available: available});
+    res.status(200).json({total: total, issued: issued, available: available});
 });
 
 
@@ -54,7 +54,7 @@ router.post('/', async (req, res) => {
 
     book = await book.save();
 
-    res.send(book);
+    res.status(200).send(book);
 });
 
 
@@ -67,6 +67,7 @@ router.post('/addMany', async (req, res) => {
     const from = Number(req.body.from);
     const to = Number(req.body.to);
     const backCode = req.body.backCode;
+    var inserted;
 
     for (from; from <= to; from++) {
         let code = {code: from + '/' + backCode };
@@ -76,9 +77,10 @@ router.post('/addMany', async (req, res) => {
 
         let book = new Book({...req.body, ...code});
         await book.save();
+        inserted++
     }
 
-    res.status(200).send(`${to} Books added successfully`);
+    res.status(200).send(`${inserted} out of ${to} Books added successfully`);
 
 });
 
