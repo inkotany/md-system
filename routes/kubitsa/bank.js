@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const express = require("express");
+const { v4 } = require('uuid');
 const { User } = require("../../models/user");
 const { Student } = require("../../models/student");
 const { Transaction } = require("../../models/transaction");
@@ -77,6 +78,16 @@ router.get("/transactions/:user", async (req, res) => {
   res.status(200).send(transactions);
 });
 
+router.get('/transactions', async (req, res) => {
+  let student = req.query.student;
+  student = await Transaction.find({ student: {code: req.query.code}});
+
+  if (student.length === 0)
+    return res.send("No transaction yet!").status(404);
+
+  res.status(200).send(student); 
+});
+
 router.post("/deposit", async (req, res) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -84,11 +95,14 @@ router.post("/deposit", async (req, res) => {
   let student = await Student.findOne({ code: req.body.code });
   if (!student) return res.status(404).send("Student not found");
 
-  let newBalance = Number(student.balance) + Number(req.body.amount);
+  let amount = Number(req.body.amount);
+  let balance = Number(student.balance);
+
+  let newBalance = balance + amount;
   let transaction = new Transaction({
-    tID: "uuid",
+    tID: v4(),
     activity: "Kubitsa",
-    amount: Number(req.body.amount),
+    amount: amount,
     student: {
       names: student.names,
       classRoom: student.classRoom,
@@ -97,17 +111,57 @@ router.post("/deposit", async (req, res) => {
     agent: "User",
   });
 
+  await transaction.save();
+
   student = await Student.findOneAndUpdate(
     { code: req.body.code },
     { $set: { balance: newBalance } }
   );
-  if (!student) return res.send("Igikorwa ntikibashije gukunda!");
+  if (!student) return res.status(500).send("Igikorwa ntikibashije gukunda!");
 
   res
     .status(200)
     .send(
       `${student.names} abikije ${Number(req.body.amount).toLocaleString()} Rwf`
     );
+});
+
+router.post('/cashout', async (req, res) => {
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  let student = await Student.findOne({ code: req.body.code });
+  if (!student) return res.status(404).send("Student not found");
+
+  let balance = Number(student.balance);
+  let amount = Number(req.body.amount);
+
+  if (amount > balance) return res.status(200).send('Amafaranga mushyizemo ntari kuri konti!');
+  let newBalance = balance - amount;
+
+  let transaction = new Transaction({
+    tID: v4(),
+    activity: "Kubikuza",
+    amount: amount,
+    student: {
+      names: student.names,
+      classRoom: student.classRoom,
+      code: student.code,
+    },
+    agent: "User",
+  });
+
+  await transaction.save();
+
+  student = await Student.findOneAndUpdate(
+    { code: req.body.code },
+    { $set: { balance: newBalance } }
+  );
+
+  if (!student) return res.status(500).send("Igikorwa ntikibashije gukunda!");
+
+  res.status(200).send(`${student.names} abikuje ${amount.toLocaleString()} Rwf`);
+  
 });
 
 module.exports = router;
